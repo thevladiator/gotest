@@ -18,6 +18,7 @@ builds:
       - v1
 archives:
   - 
+    format: tar.gz
     replacements:
       linux: Linux
       amd64: x86_64

@@ -9,5 +9,5 @@ type Person struct {
 }
 
 func (person Person) DisplayPerson() string {
-	return fmt.Sprintf("%v %v\n%v", person.FirstName, person.LastName, person.Address.DisplayAddress())
+	return fmt.Sprintf("Hi, %v %v!\n%v", person.FirstName, person.LastName, person.Address.DisplayAddress())
 }
