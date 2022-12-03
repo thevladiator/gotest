@@ -1,5 +1,7 @@
 # This is an example .goreleaser.yml file with some sensible defaults.
 # Make sure to check the documentation at https://goreleaser.com
+project_name: gotest
+dist: ./dist
 before:
   hooks:
     # You may remove this if you don't use go modules.
@@ -18,13 +20,12 @@ builds:
       - v1
 archives:
   - 
-    format: tar.gz
+    format: binary
     replacements:
       linux: Linux
       amd64: x86_64
 nfpms:
   -
-    # package_name: mytest
     replacements:
       amd64: 64-bit
       linux: Linux
@@ -36,19 +37,17 @@ nfpms:
     license: Apache 2.0
     formats:
       - deb
-    bindir: /usr/local/bin
+    bindir: "/usr/local/bin/{{.ProjectName}}"
 checksum:
   name_template: 'checksums.txt'
 snapshot:
-  name_template: "{{ incpatch .Version }}-next"
+  name_template: "{{ .Version }}-SNAPSHOT"
 changelog:
   sort: asc
   filters:
     exclude:
       - '^docs:'
       - '^test:'
-project_name: testproject
-dist: /home/vlad/go/bin/test/
 # modelines, feel free to remove those if you don't want/use them:
 # yaml-language-server: $schema=https://goreleaser.com/static/schema.json
 # vim: set ts=2 sw=2 tw=0 fo=cnqoj
