@@ -1,0 +1,92 @@
+pipeline {
+    // Run on an agent where we want to use Go
+    agent any
+    
+    // Ensure the desired Go version is installed for all stages,
+    // using the name defined in the Global Tool Configuration
+    tools { go '1.19' }
+    
+    environment {
+        GETT_REPO = "$WORKSPACE"
+        GETT_WORK_DIR = "$WORKSPACE/gotest"
+        GETT_TEST_DIR = "$WORKSPACE/"
+        GETT_BUILDS = "$WORKSPACE/bin"
+        DEB_FILE_NAME = "gotest_${env.BUILD_NUMBER}"
+        DEB_ROOT_DIR = "${GETT_BUILDS}/${DEB_FILE_NAME}"
+        GOBIN = "${DEB_ROOT_DIR}"
+    }
+    
+    stages {
+        /*
+        stage ('set parameters') {
+            steps {
+                script {
+                    properties([
+                        parameters([
+                            string(
+                                defaultValue: '0', 
+                                description: 'Enter major version',
+                                name: 'MAJOR_VERSION'),
+                            string(
+                                defaultValue: '0',
+                                description: 'Enter minor version',
+                                name: 'MINOR_VERSION')
+                            ])
+                        ])
+                }
+            }
+        }
+        */
+        stage('get code') {
+            steps {
+                // Get some code from a GitHub repository
+                // git credentialsId: 'd37ac433-51df-41f5-a6c1-bcc9c636b5b0', url: 'https://bitbucket.cambiumnetworks.com/scm/gettsupport/go-getter.git'
+                // git credentialsId: 'd37ac433-51df-41f5-a6c1-bcc9c636b5b0', url: 'ssh://git@bitbucket.cambiumnetworks.com:7999/gettsupport/go-getter.git'
+                //sh 'cp -r ~/userContent/src/go-getter/*  $WORKSPACE'
+                
+                dir("${env.GETT_REPO}") {
+                    git url: 'https://github.com/thevladiator/gotest.git'
+                    // sh 'pwd'
+                    // sh 'git clone ssh://git@bitbucket.cambiumnetworks.com:7999/gettsupport/go-getter.git'
+                }
+            }
+        }
+        stage('build') {
+            steps {
+                // Creates executable and place in GOBIN
+                sh 'go version'
+                dir("${env.GETT_REPO}") {
+                    sh 'go build'
+                }
+            }
+        }
+        /*
+        stage('test') {
+            steps {
+                dir("${env.GETT_WORK_DIR}") {
+                    sh 'go test ./...'
+                }
+            }
+        }
+        */
+        
+        stage('install') {
+            steps {
+                // Creates executable and place in GOBIN
+                dir("${env.GETT_REPO}") {
+                    echo "GOBIN = ${env.GOBIN}"
+                    sh 'go install'
+                }
+            }
+        }
+        
+        stage('tar') {
+            steps {
+                // Creates tar file
+                dir("${env.GETT_BUILDS}") {
+                    sh 'tar -czf $DEB_FILE_NAME.tar.gz $DEB_FILE_NAME'
+                }
+            }
+        }
+    }
+}
