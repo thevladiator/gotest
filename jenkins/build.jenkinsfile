@@ -52,15 +52,12 @@ pipeline {
         
         stage('push success tag') {
             steps {
-                // Creates executable and place in GOBIN
-               script {
-                    sshagent (credentials: ['vlad']) {
-                        sh '''
-                            cd "${GETT_REPO}"
-                            git tag -af "$BUILD_TAG" -m "$BUILD_TAG"
-                            git push -f origin $BUILD_TAG
-                        '''
-                    }
+                sshagent (credentials: ['github']) {
+                    sh '''
+                        cd "${GETT_REPO}"
+                        git tag -af "$BUILD_TAG" -m "$BUILD_TAG"
+                        git push -f origin $BUILD_TAG
+                    '''
                 }
             }
         }
