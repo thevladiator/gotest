@@ -28,6 +28,10 @@ pipeline {
                 dir("${env.GETT_REPO}") {
                     // git url: 'https://github.com/thevladiator/gotest.git'
                     sh 'pwd'
+                    sh '''
+                        git config user.name "Vlad Georgescu"
+                        git config user.name
+                    '''
                     // sh 'git clone ssh://git@bitbucket.cambiumnetworks.com:7999/gettsupport/go-getter.git'
                 }
             }
@@ -56,6 +60,7 @@ pipeline {
                 // dir("${env.GETT_REPO}") {
                     sh '''
                         cd "$GETT_REPO"
+                        git config user.name
                         git tag -af "$BUILD_TAG" -m "$BUILD_TAG"
                         git push -f origin $BUILD_TAG
                     '''
