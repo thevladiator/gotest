@@ -44,7 +44,7 @@ pipeline {
         
         stage('test') {
             steps {
-                dir("${env.GETT_WORK_DIR}") {
+                dir("${env.GETT_REPO}") {
                     sh 'go test'
                 }
             }
