@@ -14,29 +14,10 @@ pipeline {
         DEB_FILE_NAME = "gotest_${env.BUILD_NUMBER}"
         DEB_ROOT_DIR = "${GETT_BUILDS}/${DEB_FILE_NAME}"
         GOBIN = "${DEB_ROOT_DIR}"
+        BUILD_TAG = "ci-build-success"
     }
     
     stages {
-        /*
-        stage ('set parameters') {
-            steps {
-                script {
-                    properties([
-                        parameters([
-                            string(
-                                defaultValue: '0', 
-                                description: 'Enter major version',
-                                name: 'MAJOR_VERSION'),
-                            string(
-                                defaultValue: '0',
-                                description: 'Enter minor version',
-                                name: 'MINOR_VERSION')
-                            ])
-                        ])
-                }
-            }
-        }
-        */
         stage('get code') {
             steps {
                 // Get some code from a GitHub repository
@@ -45,8 +26,8 @@ pipeline {
                 //sh 'cp -r ~/userContent/src/go-getter/*  $WORKSPACE'
                 
                 dir("${env.GETT_REPO}") {
-                    git url: 'https://github.com/thevladiator/gotest.git'
-                    // sh 'pwd'
+                    // git url: 'https://github.com/thevladiator/gotest.git'
+                    sh 'pwd'
                     // sh 'git clone ssh://git@bitbucket.cambiumnetworks.com:7999/gettsupport/go-getter.git'
                 }
             }
@@ -60,7 +41,7 @@ pipeline {
                 }
             }
         }
-        /*
+        
         stage('test') {
             steps {
                 dir("${env.GETT_WORK_DIR}") {
@@ -68,7 +49,18 @@ pipeline {
                 }
             }
         }
-        */
+        
+        stage('push success tag') {
+            steps {
+                // Creates executable and place in GOBIN
+                dir("${env.GETT_REPO}") {
+                    sh '''
+                        git tag -af "$BUILD_TAG" -m "$BUILD_TAG"
+                        git push -f origin $BUILD_TAG
+                    '''
+                }
+            }
+        }
         
         stage('install') {
             steps {
