@@ -37,7 +37,7 @@ pipeline {
                 // Creates executable and place in GOBIN
                 sh 'go version'
                 dir("${env.GETT_REPO}") {
-                    sh 'go build'
+                    sh 'go build -a'
                 }
             }
         }
@@ -52,9 +52,9 @@ pipeline {
         
         stage('push success tag') {
             steps {
-                sshagent (credentials: ['github']) {
+                //sshagent (credentials: ['github']) {
+                dir("${env.GETT_REPO}") {
                     sh '''
-                        cd "${GETT_REPO}"
                         git tag -af "$BUILD_TAG" -m "$BUILD_TAG"
                         git push -f origin $BUILD_TAG
                     '''
