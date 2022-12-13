@@ -54,10 +54,12 @@ pipeline {
             steps {
                 // Creates executable and place in GOBIN
                 dir("${env.GETT_REPO}") {
-                    sh '''
-                        git tag -af "$BUILD_TAG" -m "$BUILD_TAG"
-                        git push -f origin $BUILD_TAG
-                    '''
+                    sshagent (credentials: ['vlad']) {
+                        sh '''
+                            git tag -af "$BUILD_TAG" -m "$BUILD_TAG"
+                            git push -f origin $BUILD_TAG
+                        '''
+                    }
                 }
             }
         }
